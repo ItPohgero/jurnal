@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -15,6 +15,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useToast } from "@/hooks/use-toast";
+import PWAInstallPrompt from '@/components/pwa-install';
 
 interface JournalEntry {
   id: string;
@@ -22,6 +23,11 @@ interface JournalEntry {
   description: string;
   date: Date;
   photo: string;
+}
+
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
 }
 
 export default function Home() {
@@ -45,7 +51,7 @@ export default function Home() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!name || !description || !date) {
       toast({
         title: "Error",
@@ -79,7 +85,7 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 p-6">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-4xl font-bold text-gray-900 mb-8 text-center">My Journal</h1>
-        
+        <PWAInstallPrompt/>
         <Card className="mb-8">
           <CardHeader>
             <CardTitle>New Entry</CardTitle>
@@ -94,7 +100,7 @@ export default function Home() {
                   className="w-full"
                 />
               </div>
-              
+
               <div>
                 <Textarea
                   placeholder="Write your thoughts..."
@@ -103,7 +109,7 @@ export default function Home() {
                   className="w-full min-h-[150px]"
                 />
               </div>
-              
+
               <div className="flex space-x-4">
                 <Popover>
                   <PopoverTrigger asChild>
